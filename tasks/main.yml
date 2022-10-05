@@ -29,8 +29,13 @@
     name: superlance
     state: present
 
+- name: Setup supervisor dir
+  file:
+    path: /etc/supervisor/conf.d
+    state: directory
+
 - name: Setup main supervisor config
-  template: src=main-supervisor.conf.j2 dest=/etc/supervisord.conf
+  template: src=main-supervisor.conf.j2 dest=/etc/supervisor/supervisord.conf
   tags: supervisord-main-config
   notify:
     - restart supervisord
