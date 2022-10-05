@@ -20,13 +20,8 @@
   when: ansible_distribution == 'Debian' and ansible_lsb.major_release|int < 8
 
 - name: Supervisord | Ubuntu / Debian >= 8 | Install
-  apt:
-    name: '{{ item }}'
-    cache_valid_time: 3600
-    update_cache: yes
-    state: latest
-  with_items:
-    - supervisor
+  pip:
+    name: supervisor
   when: ansible_distribution == 'Ubuntu' or (ansible_distribution == 'Debian' and ansible_lsb.major_release|int >= 8)
 
 - name: Install superlance
