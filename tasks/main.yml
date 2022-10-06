@@ -6,33 +6,28 @@
 # for each supervisord_programs configured.
 #################################################################
 
+- name: Get init-system-helper
+  get_url: 
+   url: http://archive.ubuntu.com/ubuntu/pool/main/i/init-system-helpers/init-system-helpers_1.57_all.deb
+   dest: /tmp/init-system-helpers_1.57_all.deb
 
-# Setup supervisor from backports if debian version < jessie
-- name: Supervisord | Debian < 8 | Install
+- name: Get Supervisor 4 (python3)
+  get_url: 
+   url: http://archive.ubuntu.com/ubuntu/pool/universe/s/supervisor/supervisor_4.1.0-1ubuntu1_all.deb
+   dest: /tmp/supervisor_4.1.0-1ubuntu1_all.deb
+
+- name: Install init-system-helper version 1.57
+  apt: 
+    deb: /tmp/init-system-helpers_1.57_all.deb
+
+- name: Install supervisor
   apt:
-    name: '{{ item }}'
-    cache_valid_time: 3600
-    update_cache: yes
-    state: latest
-    default_release: wheezy-backports
-  with_items:
-    - supervisor
-  when: ansible_distribution == 'Debian' and ansible_lsb.major_release|int < 8
-
-- name: Supervisord | Ubuntu / Debian >= 8 | Install
-  pip:
-    name: supervisor
-  when: ansible_distribution == 'Ubuntu' or (ansible_distribution == 'Debian' and ansible_lsb.major_release|int >= 8)
+    deb: /tmp/supervisor_4.1.0-1ubuntu1_all.deb
 
 - name: Install superlance
   pip:
     name: superlance
     state: present
-
-- name: Setup supervisor dir
-  file:
-    path: /etc/supervisor/conf.d
-    state: directory
 
 - name: Setup main supervisor config
   template: src=main-supervisor.conf.j2 dest=/etc/supervisor/supervisord.conf
